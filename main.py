@@ -27,12 +27,15 @@ class ImportProfiler:
 
     def profile_import(self, *args, **kwargs):
         mod_name = args[0]
-        if mod_name not in self.import_start_times:
+        is_new = mod_name not in self.import_start_times and mod_name not in self.sys_module_names()
+        if is_new:
             self.import_start_times[mod_name] = self.now
         try:
             return py_import(*args, **kwargs)
         finally:
-            self.check_finished()
+            # self.check_finished()
+            if is_new:
+                self.import_end_times[mod_name] = self.now
 
     @property
     def now(self) -> float:
