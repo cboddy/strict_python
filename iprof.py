@@ -57,11 +57,11 @@ class ImportProfiler:
         return set(sys.modules.keys())
 
     def raw_times(self):
-        """The raw time duration in seconds that it took to import each module"""
+        """The time duration in seconds that it took to import each module"""
         return {mod_name: self.import_end_times[mod_name] - self.import_start_times[mod_name]
                 for mod_name in self.import_end_times}
 
-    def non_import_times(self):
+    def adjusted_times(self):
         """The time duration in seconds that it took to import each module after subtracting 
         the time taken to import any modules were imported while importing this module"""
         raw_times = self.raw_times()
@@ -78,7 +78,7 @@ def main():
     with prof.profiling():
         import pandas
     # ten worst offenders
-    pprint(sorted(prof.non_import_times().items(), key=lambda tup: tup[1], reverse=True)[:10])
+    pprint(sorted(prof.adjusted_times().items(), key=lambda tup: tup[1], reverse=True)[:10])
     return prof
 
 
